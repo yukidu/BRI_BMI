@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>免費身體圓度指數 (BRI) 計算機</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .calculator {
+            background: #e9ecef;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 6px;
+            display: none;
+            text-align: center;
+        }
+        .result.show {
+            display: block;
+        }
+        .result span {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .article-section {
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d63384;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 style="text-align: center;">免費身體圓度指數 (BRI) 計算機</h1>
+    
+    <div class="calculator">
+        <div class="form-group">
+            <label for="height">身高 (公分, cm)：</label>
+            <input type="number" id="height" placeholder="請輸入身高，例如：170" required>
+        </div>
+        <div class="form-group">
+            <label for="waist">腰圍 (公分, cm)：</label>
+            <input type="number" id="waist" placeholder="請輸入腰圍，例如：80" required>
+        </div>
+        <button onclick="calculateBRI()">計算 BRI</button>
+
+        <div id="resultBox" class="result">
+            您的 BRI 指數為：<br><span id="briValue">0</span>
+            <p id="briStatus" style="font-size: 18px; margin-top: 10px; font-weight: bold;"></p>
+        </div>
+    </div>
+
+    <div class="article-section">
+        <h2>BRI 身體圓形指數是什麼？你該知道的健康新指標！</h2>
+        
+        <h3>✅ BRI 是什麼？</h3>
+        <p>BRI（Body Roundness Index）是由美國科學家於 2013 年提出，透過「腰圍」與「身高」這兩個簡單數值計算出來，用來推估一個人身體的圓胖程度。</p>
+        <p>與 BMI 不同的是：</p>
+        <ul>
+            <li>BMI 只考慮體重與身高比例。</li>
+            <li>BRI 則著重於脂肪分布（特別是腹部脂肪）。</li>
+        </ul>
+        <p>這使得 BRI 在判斷「內臟脂肪」、「代謝症候群風險」等方面，具有更高的臨床相關性。</p>
+
+        <h3>📏 如何計算 BRI？</h3>
+        <p>公式為：<code>BRI = 364.2 − 365.5 × √[1 – (腰圍 / 2π)² / (0.5 × 身高)²]</code> （計算時腰圍與身高皆轉換為公尺）</p>
+
+        <h3>🔍 BRI 正常值與健康判讀</h3>
+        <table>
+            <tr>
+                <th>BRI 值範圍</th>
+                <th>身體狀態</th>
+                <th>健康提示</th>
+            </tr>
+            <tr>
+                <td>&lt; 3.41</td>
+                <td>身體最不圓</td>
+                <td>體脂肪偏低，需留意營養</td>
+            </tr>
+            <tr>
+                <td>3.41 ～ 4.5</td>
+                <td>偏瘦</td>
+                <td>可接受，建議搭配 BMI 評估</td>
+            </tr>
+            <tr>
+                <td>4.5 ～ 5.5</td>
+                <td>✅ 正常範圍</td>
+                <td>健康圓潤，脂肪分布良好</td>
+            </tr>
+            <tr>
+                <td>5.5 ～ 6.9</td>
+                <td>偏圓</td>
+                <td>腹部脂肪略高，開始注意飲食與運動</td>
+            </tr>
+            <tr>
+                <td>&gt; 6.9</td>
+                <td>❗ 身體最圓</td>
+                <td>內臟脂肪明顯偏高，需警覺代謝風險</td>
+            </tr>
+        </table>
+
+        <h3>🤔 為什麼 BRI 比 BMI 更值得關注？</h3>
+        <table>
+            <tr>
+                <th>項目</th>
+                <th>BMI</th>
+                <th>BRI</th>
+            </tr>
+            <tr>
+                <td>使用參數</td>
+                <td>體重 + 身高</td>
+                <td>腰圍 + 身高</td>
+            </tr>
+            <tr>
+                <td>可反映腹部脂肪</td>
+                <td>❌ 不準確</td>
+                <td>✅ 較準確</td>
+            </tr>
+            <tr>
+                <td>預測代謝風險</td>
+                <td>❌ 敏感度低</td>
+                <td>✅ 敏感度高</td>
+            </tr>
+            <tr>
+                <td>適合族群</td>
+                <td>一般體型評估</td>
+                <td>內臟脂肪與代謝風險族群</td>
+            </tr>
+        </table>
+        
+        <p><strong>📝 結語：身體不是只有體重</strong><br>
+        如果你只有看 BMI，那麼你可能錯過了腹部脂肪堆積的警訊。BRI 提供一種更貼近實際身形與健康風險的新角度。無論你正在減重、追求健康體態，或只是想更了解自己，建議你開始使用 BRI 當作輔助指標！</p>
+    </div>
+</div>
+
+<script>
+    function calculateBRI() {
+        const heightCm = parseFloat(document.getElementById('height').value);
+        const waistCm = parseFloat(document.getElementById('waist').value);
+
+        if (!heightCm || !waistCm || heightCm <= 0 || waistCm <= 0) {
+            alert('請輸入有效的身高與腰圍數值！');
+            return;
+        }
+
+        // 將公分轉換為公尺以符合公式標準
+        const h = heightCm / 100;
+        const wc = waistCm / 100;
+
+        // BRI 數學公式
+        const pi = Math.PI;
+        const term1 = Math.pow(wc / (2 * pi), 2);
+        const term2 = Math.pow(0.5 * h, 2);
+        
+        const underRoot = 1 - (term1 / term2);
+        
+        if (underRoot < 0) {
+            alert('輸入的數值不合理，請重新確認！');
+            return;
+        }
+
+        const bri = 364.2 - 365.5 * Math.sqrt(underRoot);
+        
+        document.getElementById('briValue').innerText = bri.toFixed(2);
+        
+        // 狀態判定
+        let status = '';
+        if (bri < 3.41) {
+            status = '狀態：身體最不圓（體脂肪偏低，需留意營養）';
+        } else if (bri >= 3.41 && bri < 4.5) {
+            status = '狀態：偏瘦（可接受，建議搭配 BMI 評估）';
+        } else if (bri >= 4.5 && bri < 5.5) {
+            status = '狀態：✅ 正常範圍（健康圓潤，脂肪分布良好）';
+        } else if (bri >= 5.5 && bri < 6.9) {
+            status = '狀態：偏圓（腹部脂肪略高，開始注意飲食與運動）';
+        } else {
+            status = '狀態：❗ 身體最圓（內臟脂肪明顯偏高，需警覺代謝風險）';
+        }
+
+        document.getElementById('briStatus').innerText = status;
+        document.getElementById('resultBox').classList.add('show');
+    }
+</script>
+
+</body>
+</html>
