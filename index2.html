@@ -140,7 +140,6 @@
             border-bottom: none;
         }
 
-        /* 測量步驟專用 CSS */
         .measure-steps {
             text-align: left;
             margin: 10px 0 0 0;
@@ -210,11 +209,11 @@
             transform: scale(0.95);
         }
 
-        #calc-view {
+        #calc-view, #waist-view {
             padding-top: 60px;
         }
 
-        #calc-title {
+        .view-title {
             text-align: center; 
             color: var(--primary-color); 
             font-size: 2.5rem; 
@@ -327,7 +326,7 @@
             position: absolute;
             bottom: 30px;
             right: 30px;
-            width: 80px; 
+            width: 150px; 
             opacity: 0.05; 
         }
 
@@ -344,6 +343,7 @@
 <body class="theme-bri">
 
     <div id="floating-nav">
+        <button id="nav-btn-waist" class="nav-btn inactive" onclick="openCalc('waist')">📏 量腰圍</button>
         <button id="nav-btn-bri" class="nav-btn active" onclick="openCalc('bri')">⭕ BRI</button>
         <button id="nav-btn-bmi" class="nav-btn inactive" onclick="openCalc('bmi')">⚖️ BMI</button>
     </div>
@@ -393,9 +393,11 @@
                     </tbody>
                 </table>
             </div>
+        </div>
 
-            <div class="comparison-table-wrapper" style="animation-delay: 0.4s;">
-                <h3 style="margin-bottom: 5px; color: var(--primary-color); transition: color 0.6s ease;">📏 正確量測腰圍方式</h3>
+        <div id="waist-view" class="view">
+            <h1 class="view-title">📏 正確量測腰圍</h1>
+            <div class="article-content" style="margin-top: 0;">
                 <ul class="measure-steps">
                     <li class="measure-step">
                         <div class="measure-step-num">1</div>
@@ -418,7 +420,7 @@
         </div>
 
         <div id="calc-view" class="view">
-            <h1 id="calc-title"></h1>
+            <h1 id="calc-title" class="view-title"></h1>
             
             <div class="input-group">
                 <input type="text" id="inp-nickname" class="giant-input" placeholder="✨ 暱稱 (選填)">
@@ -521,33 +523,40 @@
 
         function openCalc(type) {
             currentMode = type;
-            switchView('calc-view');
             
             if (type === 'bmi') {
                 document.body.className = 'theme-bmi';
             } else {
-                document.body.className = 'theme-bri';
+                document.body.className = 'theme-bri'; // 腰圍跟 BRI 共用粉紅主題
             }
             
+            // 更新三個按鈕的狀態
             document.getElementById('nav-btn-bri').className = (type === 'bri') ? 'nav-btn active' : 'nav-btn inactive';
             document.getElementById('nav-btn-bmi').className = (type === 'bmi') ? 'nav-btn active' : 'nav-btn inactive';
+            document.getElementById('nav-btn-waist').className = (type === 'waist') ? 'nav-btn active' : 'nav-btn inactive';
             
-            document.getElementById('inp-height').value = '';
-            document.getElementById('inp-weight').value = '';
-            document.getElementById('inp-waist').value = '';
-            
-            if (type === 'bmi') {
-                document.getElementById('calc-title').innerText = '⚖️ BMI 計算機';
-                document.getElementById('group-weight').style.display = 'block';
-                document.getElementById('group-waist').style.display = 'none';
-                document.getElementById('article-bmi').style.display = 'block';
-                document.getElementById('article-bri').style.display = 'none';
+            if (type === 'waist') {
+                switchView('waist-view'); // 顯示腰圍專屬頁面
             } else {
-                document.getElementById('calc-title').innerText = '⭕ BRI 計算機';
-                document.getElementById('group-weight').style.display = 'none';
-                document.getElementById('group-waist').style.display = 'block';
-                document.getElementById('article-bmi').style.display = 'none';
-                document.getElementById('article-bri').style.display = 'block';
+                switchView('calc-view'); // 顯示計算機頁面
+                
+                document.getElementById('inp-height').value = '';
+                document.getElementById('inp-weight').value = '';
+                document.getElementById('inp-waist').value = '';
+                
+                if (type === 'bmi') {
+                    document.getElementById('calc-title').innerText = '⚖️ BMI 計算機';
+                    document.getElementById('group-weight').style.display = 'block';
+                    document.getElementById('group-waist').style.display = 'none';
+                    document.getElementById('article-bmi').style.display = 'block';
+                    document.getElementById('article-bri').style.display = 'none';
+                } else if (type === 'bri') {
+                    document.getElementById('calc-title').innerText = '⭕ BRI 計算機';
+                    document.getElementById('group-weight').style.display = 'none';
+                    document.getElementById('group-waist').style.display = 'block';
+                    document.getElementById('article-bmi').style.display = 'none';
+                    document.getElementById('article-bri').style.display = 'block';
+                }
             }
         }
 
