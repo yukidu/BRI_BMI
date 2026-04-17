@@ -140,6 +140,41 @@
             border-bottom: none;
         }
 
+        /* 測量步驟專用 CSS */
+        .measure-steps {
+            text-align: left;
+            margin: 10px 0 0 0;
+            padding: 0;
+            list-style: none;
+        }
+        .measure-step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            background: #fcfcfc;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            transition: border-color 0.6s ease;
+        }
+        .measure-step:last-child {
+            margin-bottom: 0;
+        }
+        .measure-step-num {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-right: 12px;
+            min-width: 20px;
+            transition: color 0.6s ease;
+        }
+        .measure-step-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #444;
+        }
+
         #floating-nav {
             position: fixed;
             top: 10px;
@@ -292,8 +327,8 @@
             position: absolute;
             bottom: 30px;
             right: 30px;
-            width: 150px; 
-            opacity: 0.04; 
+            width: 80px; 
+            opacity: 0.05; 
         }
 
         footer {
@@ -330,33 +365,55 @@
                     <thead>
                         <tr>
                             <th style="color: #555;">項目</th>
-                            <th style="color: #20bf6b;">BMI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">身體質量指數</span></th>
-                            <th style="color: #ff6b6b;">BRI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">身體圓度指數</span></th>
+                            <th style="color: #20bf6b;">BMI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">(身體質量指數)</span></th>
+                            <th style="color: #ff6b6b;">BRI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">(身體圓度指數)</span></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td style="font-weight: bold; color: #555;">主要測量</td>
                             <td>整體胖瘦<br><span style="font-size: 0.75rem; color: #999;">(體重+身高)</span></td>
-                            <td>腹部脂肪<br><span style="font-size: 0.75rem; color: #999;">(腰圍+身高)</span></td>
+                            <td>脂肪分佈<br><span style="font-size: 0.75rem; color: #999;">(腰圍+身高)</span></td>
                         </tr>
                         <tr>
-                            <td style="font-weight: bold; color: #555;">內臟脂肪</td>
-                            <td>❌ 較弱</td>
-                            <td>✅ 較準確</td>
+                            <td style="font-weight: bold; color: #555;">內臟脂肪敏銳度</td>
+                            <td>❌ 低</td>
+                            <td>✅ 高</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: bold; color: #555;">代謝風險</td>
+                            <td style="font-weight: bold; color: #555;">心血管風險預測</td>
                             <td>❌ 較弱</td>
                             <td>✅ 較準確</td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #555;">適用情境</td>
-                            <td>一般體型評估</td>
-                            <td>內臟脂肪與代謝風險</td>
+                            <td>一般健康快篩</td>
+                            <td>關注小腹、代謝問題</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="comparison-table-wrapper" style="animation-delay: 0.4s;">
+                <h3 style="margin-bottom: 5px; color: var(--primary-color); transition: color 0.6s ease;">📏 正確量測腰圍方式</h3>
+                <ul class="measure-steps">
+                    <li class="measure-step">
+                        <div class="measure-step-num">1</div>
+                        <div class="measure-step-text"><b>輕鬆站立：</b>除去腰部覆蓋衣物，輕鬆站立，雙手自然下垂。</div>
+                    </li>
+                    <li class="measure-step">
+                        <div class="measure-step-num">2</div>
+                        <div class="measure-step-text"><b>對準肚臍：</b>皮尺繞過腰部，對準<b>肚臍水平線</b>。</div>
+                    </li>
+                    <li class="measure-step">
+                        <div class="measure-step-num">3</div>
+                        <div class="measure-step-text"><b>保持平行：</b>調整皮尺與地面平行，並緊貼皮膚但不擠壓。</div>
+                    </li>
+                    <li class="measure-step">
+                        <div class="measure-step-num">4</div>
+                        <div class="measure-step-text"><b>吐氣量測：</b>維持正常呼吸，於<b>吐氣結束時</b>量測數值。</div>
+                    </li>
+                </ul>
             </div>
         </div>
 
@@ -443,12 +500,12 @@
                 <h4>📋 評量標準參考：</h4>
                 <ul id="s-standards"></ul>
             </div>
-            <img src="DragonTeamlogo.png" alt="Logo" class="share-logo">
+            <img src="Dragon Team logo v2.2 no文字.png" alt="Logo" class="share-logo">
         </div>
     </div>
 
     <footer>
-        APP程式設計：杜杜龍 2026.4.17
+        網站設計寰宇杜杜龍 2026.4.17
     </footer>
 
     <script>
