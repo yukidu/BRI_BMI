@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>健管45計算機：BRI & BMI</title>
+    <title>活力健康計算機：BRI & BMI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -23,9 +23,9 @@
         }
 
         html, body {
-            height: 100%;
             margin: 0;
             padding: 0;
+            min-height: 100vh; /* 解決滑動卡住的問題 */
         }
 
         body {
@@ -40,7 +40,7 @@
         }
 
         .container {
-            flex: 1;
+            flex: 1 0 auto; /* 確保內容能把版權推到底部 */
             max-width: 900px;
             margin: 0 auto;
             padding: 10px 20px;
@@ -79,7 +79,7 @@
         .big-card {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 25px;
-            padding: 25px 20px;
+            padding: 20px;
             margin: 15px 0;
             text-align: center;
             cursor: pointer;
@@ -93,18 +93,18 @@
             background: #fff;
         }
         .big-card h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin: 0 0 10px 0;
         }
         .big-card p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #555;
             margin: 0;
         }
 
         #floating-nav {
             position: fixed;
-            top: 15px;
+            top: 10px;
             right: 15px;
             z-index: 1000;
             display: none;
@@ -116,9 +116,9 @@
         }
         .nav-btn {
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 15px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             margin: 0 4px;
             cursor: pointer;
@@ -138,31 +138,33 @@
         }
 
         #calc-view {
-            padding-top: 70px;
+            padding-top: 60px;
         }
 
         #calc-title {
             text-align: center; 
             color: var(--primary-color); 
-            font-size: 2.8rem; 
+            font-size: 2.5rem; 
             text-shadow: 2px 2px 0px #fff; 
             margin-top: 0;
+            margin-bottom: 20px;
             transition: color 0.6s ease;
         }
 
-        .input-group { margin-bottom: 25px; }
+        /* 縮小間距，讓按鈕完整顯示 */
+        .input-group { margin-bottom: 12px; }
         .giant-input {
             width: 100%;
-            font-size: 2rem;
-            padding: 20px;
-            border: 5px solid transparent;
-            border-radius: 25px;
+            font-size: 1.6rem;
+            padding: 15px;
+            border: 4px solid transparent;
+            border-radius: 20px;
             background: rgba(255, 255, 255, 0.85);
             color: #333;
             box-sizing: border-box;
             text-align: center;
             font-weight: bold;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             transition: all 0.3s;
         }
         .giant-input::placeholder { color: #aaa; font-weight: normal; }
@@ -170,21 +172,22 @@
             outline: none;
             background: #fff;
             border-color: var(--primary-color);
-            transform: scale(1.03);
-            box-shadow: 0 15px 30px var(--primary-shadow);
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px var(--primary-shadow);
         }
 
         .giant-btn {
             width: 100%;
-            font-size: 2rem;
-            padding: 18px;
+            font-size: 1.8rem;
+            padding: 16px;
+            margin-top: 10px;
             background: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 25px;
+            border-radius: 20px;
             cursor: pointer;
             font-weight: 900;
-            box-shadow: 0 10px 20px var(--primary-shadow);
+            box-shadow: 0 8px 15px var(--primary-shadow);
             transition: all 0.3s;
             animation: pulseTheme 2.5s infinite;
         }
@@ -192,28 +195,33 @@
 
         .result-box {
             background: #fff;
-            padding: 25px;
-            border-radius: 25px;
+            padding: 20px;
+            border-radius: 20px;
             text-align: center;
-            margin-top: 30px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            margin-top: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             display: none;
         }
         .result-box h2 { 
-            font-size: 3rem; 
+            font-size: 2.8rem; 
             color: var(--primary-color); 
             margin: 10px 0; 
             transition: color 0.6s ease;
         }
-        .result-box p { font-size: 1.6rem; font-weight: bold; }
+        .result-box p { font-size: 1.5rem; font-weight: bold; margin-bottom: 0; }
 
         .article-content {
             background: rgba(255,255,255,0.9);
-            padding: 25px;
+            padding: 20px;
             border-radius: 20px;
-            margin-top: 35px;
+            margin-top: 25px;
             line-height: 1.8;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
+        }
+        
+        /* 確保 BRI 評量標準每一行維持不換行 */
+        #article-bri ul li {
+            white-space: nowrap;
         }
 
         #share-wrapper {
@@ -230,7 +238,7 @@
             padding: 50px;
             box-sizing: border-box;
             text-align: center;
-            position: relative; /* 為了絕對定位 Logo */
+            position: relative;
         }
         .share-header { border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px; font-size: 28px; font-weight: 900; }
         .share-user-info { font-size: 22px; margin-bottom: 30px; text-align: left; }
@@ -238,21 +246,22 @@
         .share-status { font-size: 32px; font-weight: bold; margin-bottom: 40px; }
         .share-details { text-align: left; border-top: 2px dashed #000; padding-top: 20px; font-size: 18px; line-height: 1.6; }
         .share-details h4 { font-size: 22px; margin: 10px 0; }
-        .share-details ul { list-style-type: none; padding-left: 0; margin-top: 5px; } /* 單欄排版 */
+        .share-details ul { list-style-type: none; padding-left: 0; margin-top: 5px; } 
         .share-details li { margin-bottom: 5px; }
 
-        /* 絕對定位的淡化 Logo */
+        /* Logo 透明度改為 5% */
         .share-logo {
             position: absolute;
             bottom: 30px;
             right: 30px;
-            width: 80px; /* 可根據需要調整大小 */
-            opacity: 0.05; /* 淡化 20% */
+            width: 80px; 
+            opacity: 0.05; 
         }
 
         footer {
+            flex-shrink: 0;
             text-align: center;
-            padding: 15px;
+            padding: 20px 10px;
             color: rgba(0,0,0,0.5);
             font-weight: bold;
             font-size: 13px;
@@ -297,7 +306,7 @@
                 <input type="number" id="inp-waist" class="giant-input" placeholder="⭕ 腰圍 (公分 cm)">
             </div>
 
-            <button class="giant-btn" id="main-calc-btn" onclick="processCalculationAndShare()">🚀 立即計算</button>
+            <button class="giant-btn" id="main-calc-btn" onclick="processCalculationAndShare()">🚀 立即計算並分享結果</button>
 
             <div id="result-area" class="result-box">
                 <div>你的 <span id="res-type"></span> 數值為：</div>
@@ -361,12 +370,12 @@
                 <h4>📋 評量標準參考：</h4>
                 <ul id="s-standards"></ul>
             </div>
-            <img src="DragonTeamlogo.png" alt="Logo" class="share-logo">
+            <img src="Dragon Team logo v2.2 no文字.png" alt="Logo" class="share-logo">
         </div>
     </div>
 
     <footer>
-        APP程式設計:寰宇杜杜龍 2026.4.17
+        網站設計寰宇杜杜龍 2026.4.17
     </footer>
 
     <script>
@@ -412,7 +421,6 @@
             }
         }
 
-        // 結合計算與分享的流程
         async function processCalculationAndShare() {
             let nickname = document.getElementById('inp-nickname').value || '神祕客';
             let age = document.getElementById('inp-age').value ? `${document.getElementById('inp-age').value}歲` : '';
@@ -427,7 +435,7 @@
             let status = '';
             let inputsStr = `身高 ${height} cm`;
             const standardsUl = document.getElementById('s-standards');
-            standardsUl.innerHTML = ''; // 清空列表
+            standardsUl.innerHTML = ''; 
 
             if (currentMode === 'bmi') {
                 let weight = parseFloat(document.getElementById('inp-weight').value);
@@ -449,7 +457,6 @@
                 document.getElementById('s-calc-type').innerText = 'BMI (身體質量指數)';
                 document.getElementById('s-formula').innerHTML = 'BMI = 體重(kg) / [身高(m)]²';
                 
-                // 單欄列表設定
                 const standards = [
                     '過輕 &lt; 18.5',
                     '18.5 ≦ 正常 &lt; 24',
@@ -491,7 +498,6 @@
                 document.getElementById('s-calc-type').innerText = 'BRI (身體圓度指數)';
                 document.getElementById('s-formula').innerText = 'BRI = 364.2 − 365.5 × √[1 – (腰圍/2π)² / (0.5×身高)²]';
                 
-                // 單欄列表設定
                 const standards = [
                     '&lt; 3.41 偏低',
                     '3.41-4.5 偏瘦',
@@ -515,10 +521,10 @@
             document.getElementById('s-value').innerText = value;
             document.getElementById('s-status').innerText = status;
 
-            // 計算完成後，立刻開始截圖與分享流程
             await executeShare();
         }
 
+        // 修正後的 Fallback 畫面，移除了文字框，並更新了關閉按鈕文字
         function showImageFallbackOverlay(dataUrl) {
             let overlay = document.getElementById('line-share-overlay');
             if (!overlay) {
@@ -531,18 +537,14 @@
                 closeBtn.style.cssText = 'margin-bottom: 20px; padding: 12px 25px; font-size: 18px; font-weight: bold; border-radius: 30px; border: none; background: #fff; color: #333; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);';
                 closeBtn.onclick = () => overlay.style.display = 'none';
                 
-                const hintText = document.createElement('div');
-                
                 const img = document.createElement('img');
                 img.id = 'fallback-result-img';
-                img.style.cssText = 'max-width: 100%; max-height: 60vh; border-radius: 15px; object-fit: contain; box-shadow: 0 0 25px rgba(255,255,255,0.2);';
+                img.style.cssText = 'max-width: 100%; max-height: 80vh; border-radius: 15px; object-fit: contain; box-shadow: 0 0 25px rgba(255,255,255,0.2);';
                 
                 overlay.appendChild(closeBtn);
                 overlay.appendChild(img);
                 document.body.appendChild(overlay);
             }
-            
-            overlay.querySelector('div').style.background = currentMode === 'bmi' ? '#20bf6b' : '#ff6b6b';
             
             document.getElementById('fallback-result-img').src = dataUrl;
             overlay.style.display = 'flex';
@@ -554,7 +556,6 @@
             shareBtn.innerText = '計算完成，圖片生成中...⏳';
             
             try {
-                // 等待 Logo 圖片載入，雖然通常已經快取了，但稍微延遲確保繪製成功
                 await new Promise(r => setTimeout(r, 200));
 
                 const targetNode = document.getElementById('share-card');
@@ -562,7 +563,7 @@
                 const canvas = await html2canvas(targetNode, {
                     scale: 2, 
                     backgroundColor: '#ffffff',
-                    useCORS: true // 允許跨域圖片 (Logo) 渲染
+                    useCORS: true 
                 });
 
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
