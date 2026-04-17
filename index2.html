@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>健管45計算機：BRI & BMI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            --primary-color: #ff6b6b;
+            --primary-hover: #ff5252;
+            --primary-shadow: rgba(255, 107, 107, 0.3);
+            --pulse-shadow: rgba(255, 107, 107, 0.7);
+        }
+
+        body.theme-bmi {
+            --bg-gradient: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            --primary-color: #20bf6b;
+            --primary-hover: #1da35b;
+            --primary-shadow: rgba(32, 191, 107, 0.3);
+            --pulse-shadow: rgba(32, 191, 107, 0.7);
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: #333;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.6s ease;
+        }
+
+        .container {
+            flex: 1 0 auto;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 10px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulseTheme {
+            0% { box-shadow: 0 0 0 0 var(--pulse-shadow); }
+            70% { box-shadow: 0 0 0 20px rgba(0, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+        }
+
+        .view {
+            display: none;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .view.active {
+            display: block;
+        }
+
+        /* 縮小首頁按鈕間距與字體，讓畫面能塞下表格 */
+        .big-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            animation: float 4s ease-in-out infinite;
+        }
+        .big-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            background: #fff;
+        }
+        .big-card h1 {
+            font-size: 1.8rem;
+            margin: 0 0 5px 0;
+        }
+        .big-card p {
+            font-size: 1rem;
+            color: #555;
+            margin: 0;
+        }
+
+        /* 首頁對照表格的樣式 */
+        .comparison-table-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+        .comparison-table-wrapper h3 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        .comparison-table th {
+            padding: 6px;
+            border-bottom: 2px solid #ddd;
+        }
+        .comparison-table td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #eee;
+        }
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        #floating-nav {
+            position: fixed;
+            top: 10px;
+            right: 15px;
+            z-index: 1000;
+            display: none;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            backdrop-filter: blur(5px);
+        }
+        .nav-btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 0 4px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .nav-btn.active {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px var(--primary-shadow);
+        }
+        .nav-btn.inactive {
+            background: #e0e0e0;
+            color: #888;
+            opacity: 0.7;
+            transform: scale(0.95);
+        }
+
+        #calc-view {
+            padding-top: 60px;
+        }
+
+        #calc-title {
+            text-align: center; 
+            color: var(--primary-color); 
+            font-size: 2.5rem; 
+            text-shadow: 2px 2px 0px #fff; 
+            margin-top: 0;
+            margin-bottom: 20px;
+            transition: color 0.6s ease;
+        }
+
+        .input-group { margin-bottom: 12px; }
+        .giant-input {
+            width: 100%;
+            font-size: 1.6rem;
+            padding: 15px;
+            border: 4px solid transparent;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            color: #333;
+            box-sizing: border-box;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        .giant-input::placeholder { color: #aaa; font-weight: normal; }
+        .giant-input:focus {
+            outline: none;
+            background: #fff;
+            border-color: var(--primary-color);
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px var(--primary-shadow);
+        }
+
+        .giant-btn {
+            width: 100%;
+            font-size: 1.8rem;
+            padding: 16px;
+            margin-top: 10px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 900;
+            box-shadow: 0 8px 15px var(--primary-shadow);
+            transition: all 0.3s;
+            animation: pulseTheme 2.5s infinite;
+        }
+        .giant-btn:hover { background: var(--primary-hover); transform: translateY(-3px); }
+
+        .result-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .result-box h2 { 
+            font-size: 2.8rem; 
+            color: var(--primary-color); 
+            margin: 10px 0; 
+            transition: color 0.6s ease;
+        }
+        .result-box p { font-size: 1.5rem; font-weight: bold; margin-bottom: 0; }
+
+        .article-content {
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 20px;
+            margin-top: 25px;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+        
+        /* 縮小 ul 左邊的空白距離，並確保 BRI 評量標準每一行維持不換行 */
+        .article-content ul {
+            padding-left: 20px; /* 將預設的空白往左縮 */
+        }
+        #article-bri ul li {
+            white-space: nowrap;
+        }
+
+        #share-wrapper {
+            position: fixed;
+            top: -20000px;
+            left: -20000px;
+            z-index: -999;
+        }
+        #share-card {
+            width: 600px;
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            padding: 50px;
+            box-sizing: border-box;
+            text-align: center;
+            position: relative;
+        }
+        .share-header { border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px; font-size: 28px; font-weight: 900; }
+        .share-user-info { font-size: 22px; margin-bottom: 30px; text-align: left; }
+        .share-main-result { font-size: 70px; font-weight: 900; margin: 40px 0; border: 2px solid #000; padding: 20px; border-radius: 15px;}
+        .share-status { font-size: 32px; font-weight: bold; margin-bottom: 40px; }
+        .share-details { text-align: left; border-top: 2px dashed #000; padding-top: 20px; font-size: 18px; line-height: 1.6; }
+        .share-details h4 { font-size: 22px; margin: 10px 0; }
+        .share-details ul { list-style-type: none; padding-left: 0; margin-top: 5px; } 
+        .share-details li { margin-bottom: 5px; }
+
+        .share-logo {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 80px; 
+            opacity: 0.05; 
+        }
+
+        footer {
+            flex-shrink: 0;
+            text-align: center;
+            padding: 10px;
+            color: rgba(0,0,0,0.5);
+            font-weight: bold;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="theme-bri">
+
+    <div id="floating-nav">
+        <button id="nav-btn-bri" class="nav-btn active" onclick="openCalc('bri')">⭕ BRI</button>
+        <button id="nav-btn-bmi" class="nav-btn inactive" onclick="openCalc('bmi')">⚖️ BMI</button>
+    </div>
+
+    <div class="container">
+        <div id="home-view" class="view active">
+            <div class="big-card" onclick="openCalc('bri')" style="animation-delay: 0s;">
+                <h1 style="color: #ff6b6b;">⭕ BRI 計算機</h1>
+                <p>身體圓度指數：掌握腹部脂肪，預測健康風險的新指標！</p>
+            </div>
+            <div class="big-card" onclick="openCalc('bmi')" style="animation-delay: 0.1s;">
+                <h1 style="color: #20bf6b;">⚖️ BMI 計算機</h1>
+                <p>身體質量指數：衡量整體體重與身高的經典指標！</p>
+            </div>
+
+            <div class="comparison-table-wrapper">
+                <h3>BMI 與 BRI，你該選哪個？</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="color: #555;">項目</th>
+                            <th style="color: #20bf6b;">BMI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">(身體質量指數)</span></th>
+                            <th style="color: #ff6b6b;">BRI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">(身體圓度指數)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: bold; color: #555;">主要測量</td>
+                            <td>整體胖瘦<br><span style="font-size: 0.75rem; color: #999;">(體重+身高)</span></td>
+                            <td>脂肪分佈<br><span style="font-size: 0.75rem; color: #999;">(腰圍+身高)</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #555;">內臟脂肪敏銳度</td>
+                            <td>❌ 低</td>
+                            <td>✅ 高</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #555;">心血管風險預測</td>
+                            <td>❌ 較弱</td>
+                            <td>✅ 較準確</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #555;">適用情境</td>
+                            <td>一般健康快篩</td>
+                            <td>關注小腹、代謝問題</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="calc-view" class="view">
+            <h1 id="calc-title"></h1>
+            
+            <div class="input-group">
+                <input type="text" id="inp-nickname" class="giant-input" placeholder="✨ 暱稱 (選填)">
+            </div>
+            <div class="input-group">
+                <input type="number" id="inp-age" class="giant-input" placeholder="🎂 年齡 (選填)">
+            </div>
+            <div class="input-group">
+                <input type="number" id="inp-height" class="giant-input" placeholder="📏 身高 (公分 cm)" required>
+            </div>
+            <div class="input-group" id="group-weight">
+                <input type="number" id="inp-weight" class="giant-input" placeholder="⚖️ 體重 (公斤 kg)">
+            </div>
+            <div class="input-group" id="group-waist">
+                <input type="number" id="inp-waist" class="giant-input" placeholder="⭕ 腰圍 (公分 cm)">
+            </div>
+
+            <button class="giant-btn" id="main-calc-btn" onclick="processCalculationAndShare()">🚀 顯示結果</button>
+
+            <div id="result-area" class="result-box">
+                <div>你的 <span id="res-type"></span> 數值為：</div>
+                <h2 id="res-value">0.00</h2>
+                <p id="res-status"></p>
+            </div>
+
+            <div id="article-bmi" class="article-content">
+                <h2>什麼是 BMI (身體質量指數)？</h2>
+                <p>BMI (Body Mass Index) 是國際上通用評估胖瘦的方式，主要透過體重與身高的比例，來了解自己的體態是否落在健康的範圍。</p>
+                <p><strong>標準公式：</strong>體重(kg) / [身高(m)]²</p>
+                <h3>📌 BMI 評量標準：</h3>
+                <ul>
+                    <li><strong>過輕：</strong> BMI &lt; 18.5</li>
+                    <li><strong>正常：</strong> 18.5 ≦ BMI &lt; 24</li>
+                    <li><strong>過重：</strong> 24 ≦ BMI &lt; 27</li>
+                    <li><strong>輕度肥胖：</strong> 27 ≦ BMI &lt; 30</li>
+                    <li><strong>中度肥胖：</strong> 30 ≦ BMI &lt; 35</li>
+                    <li><strong>重度肥胖：</strong> BMI ≧ 35</li>
+                </ul>
+            </div>
+
+            <div id="article-bri" class="article-content">
+                <h2>什麼是 BRI (身體圓度指數)？</h2>
+                <p>BRI (Body Roundness Index) 著重於脂肪的分布（特別是腹部脂肪），相較於 BMI，BRI 能更敏銳地反映內臟脂肪及心血管、代謝症候群的潛在風險。</p>
+                <p><strong>標準公式：</strong>364.2 − 365.5 × √[1 – (腰圍/2π)² / (0.5×身高)²]</p>
+                <h3>📌 BRI 評量標準：</h3>
+                <ul>
+                    <li><strong>&lt; 3.41：</strong> 體脂肪偏低，需留意營養</li>
+                    <li><strong>3.41 ～ 4.5：</strong> 偏瘦，可接受範圍</li>
+                    <li><strong>4.5 ～ 5.5：</strong> ✅ 正常範圍 (健康圓潤)</li>
+                    <li><strong>5.5 ～ 6.9：</strong> 偏圓，腹部脂肪略高</li>
+                    <li><strong>&gt; 6.9：</strong> 身體最圓，需警覺代謝風險</li>
+                </ul>
+                
+                <h3>📺 新聞報導影片：</h3>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="https://youtu.be/4BD-K3PQ0eo?si=7joZLsLDCIFXAsZn" target="_blank" style="display: block; text-decoration: none;">
+                        <img src="image_e77809.jpg" alt="點此觀看健康新聞報導" style="width: 100%; border-radius: 15px; box-shadow: 0 8px 15px rgba(0,0,0,0.15);">
+                        <p style="color: #666; font-size: 0.95rem; margin-top: 10px;">👆 點擊圖片前往 YouTube 觀看</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="share-wrapper">
+        <div id="share-card">
+            <div class="share-header">我的健康評估報告</div>
+            <div class="share-user-info">
+                <strong>👤 受測者：</strong> <span id="s-nickname"></span> <span id="s-age"></span><br>
+                <strong>📊 輸入數據：</strong> <span id="s-inputs"></span>
+            </div>
+            <div style="font-size: 24px;">計算指標：<span id="s-calc-type"></span></div>
+            <div class="share-main-result" id="s-value"></div>
+            <div class="share-status">評估結果：<span id="s-status"></span></div>
+            
+            <div class="share-details">
+                <h4>🧮 計算公式：</h4>
+                <p id="s-formula"></p>
+                <h4>📋 評量標準參考：</h4>
+                <ul id="s-standards"></ul>
+            </div>
+            <img src="Dragon Team logo v2.2 no文字.png" alt="Logo" class="share-logo">
+        </div>
+    </div>
+
+    <footer>
+        網站設計寰宇杜杜龍 2026.4.17
+    </footer>
+
+    <script>
+        let currentMode = '';
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            document.getElementById('floating-nav').style.display = (viewId === 'home-view') ? 'none' : 'block';
+            document.getElementById('result-area').style.display = 'none';
+        }
+
+        function openCalc(type) {
+            currentMode = type;
+            switchView('calc-view');
+            
+            if (type === 'bmi') {
+                document.body.className = 'theme-bmi';
+            } else {
+                document.body.className = 'theme-bri';
+            }
+            
+            document.getElementById('nav-btn-bri').className = (type === 'bri') ? 'nav-btn active' : 'nav-btn inactive';
+            document.getElementById('nav-btn-bmi').className = (type === 'bmi') ? 'nav-btn active' : 'nav-btn inactive';
+            
+            document.getElementById('inp-height').value = '';
+            document.getElementById('inp-weight').value = '';
+            document.getElementById('inp-waist').value = '';
+            
+            if (type === 'bmi') {
+                document.getElementById('calc-title').innerText = '⚖️ BMI 計算機';
+                document.getElementById('group-weight').style.display = 'block';
+                document.getElementById('group-waist').style.display = 'none';
+                document.getElementById('article-bmi').style.display = 'block';
+                document.getElementById('article-bri').style.display = 'none';
+            } else {
+                document.getElementById('calc-title').innerText = '⭕ BRI 計算機';
+                document.getElementById('group-weight').style.display = 'none';
+                document.getElementById('group-waist').style.display = 'block';
+                document.getElementById('article-bmi').style.display = 'none';
+                document.getElementById('article-bri').style.display = 'block';
+            }
+        }
+
+        async function processCalculationAndShare() {
+            let nickname = document.getElementById('inp-nickname').value || '神祕客';
+            let age = document.getElementById('inp-age').value ? `${document.getElementById('inp-age').value}歲` : '';
+            let height = parseFloat(document.getElementById('inp-height').value);
+            
+            if (!height || height <= 0) {
+                alert("請輸入正確的身高！");
+                return;
+            }
+
+            let value = 0;
+            let status = '';
+            let inputsStr = `身高 ${height} cm`;
+            const standardsUl = document.getElementById('s-standards');
+            standardsUl.innerHTML = ''; 
+
+            if (currentMode === 'bmi') {
+                let weight = parseFloat(document.getElementById('inp-weight').value);
+                if (!weight || weight <= 0) {
+                    alert("請輸入正確的體重！");
+                    return;
+                }
+                inputsStr += ` / 體重 ${weight} kg`;
+                let hMeter = height / 100;
+                value = (weight / (hMeter * hMeter)).toFixed(2);
+                
+                if (value < 18.5) status = "過輕 🦴";
+                else if (value < 24) status = "正常 ✅";
+                else if (value < 27) status = "過重 🍔";
+                else if (value < 30) status = "輕度肥胖 ⚠️";
+                else if (value < 35) status = "中度肥胖 ❗";
+                else status = "重度肥胖 🚨";
+                
+                document.getElementById('s-calc-type').innerText = 'BMI (身體質量指數)';
+                document.getElementById('s-formula').innerHTML = 'BMI = 體重(kg) / [身高(m)]²';
+                
+                const standards = [
+                    '過輕 &lt; 18.5',
+                    '18.5 ≦ 正常 &lt; 24',
+                    '24 ≦ 過重 &lt; 27',
+                    '27 ≦ 輕胖 &lt; 30',
+                    '30 ≦ 中胖 &lt; 35',
+                    '重胖 ≧ 35'
+                ];
+                standards.forEach(std => {
+                    standardsUl.innerHTML += `<li>${std}</li>`;
+                });
+                
+            } else { 
+                let waist = parseFloat(document.getElementById('inp-waist').value);
+                if (!waist || waist <= 0) {
+                    alert("請輸入正確的腰圍！");
+                    return;
+                }
+                inputsStr += ` / 腰圍 ${waist} cm`;
+                
+                let hM = height / 100;
+                let wcM = waist / 100;
+                let pi = Math.PI;
+                let underRoot = 1 - Math.pow(wcM / (2 * pi), 2) / Math.pow(0.5 * hM, 2);
+                
+                if (underRoot < 0) {
+                    alert("輸入的數值超出合理範圍，請重新確認！");
+                    return;
+                }
+                
+                value = (364.2 - 365.5 * Math.sqrt(underRoot)).toFixed(2);
+                
+                if (value < 3.41) status = "體脂偏低 🦴";
+                else if (value < 4.5) status = "偏瘦 👌";
+                else if (value < 5.5) status = "正常範圍 ✅";
+                else if (value < 6.9) status = "偏圓 ⚠️";
+                else status = "身體最圓 🚨";
+
+                document.getElementById('s-calc-type').innerText = 'BRI (身體圓度指數)';
+                document.getElementById('s-formula').innerText = 'BRI = 364.2 − 365.5 × √[1 – (腰圍/2π)² / (0.5×身高)²]';
+                
+                const standards = [
+                    '&lt; 3.41 偏低',
+                    '3.41-4.5 偏瘦',
+                    '4.5-5.5 正常',
+                    '5.5-6.9 偏圓',
+                    '&gt; 6.9 身體最圓(高風險)'
+                ];
+                standards.forEach(std => {
+                    standardsUl.innerHTML += `<li>${std}</li>`;
+                });
+            }
+
+            document.getElementById('res-type').innerText = currentMode.toUpperCase();
+            document.getElementById('res-value').innerText = value;
+            document.getElementById('res-status').innerText = status;
+            document.getElementById('result-area').style.display = 'block';
+
+            document.getElementById('s-nickname').innerText = nickname;
+            document.getElementById('s-age').innerText = age ? `(${age})` : '';
+            document.getElementById('s-inputs').innerText = inputsStr;
+            document.getElementById('s-value').innerText = value;
+            document.getElementById('s-status').innerText = status;
+
+            await executeShare();
+        }
+
+        function showImageFallbackOverlay(dataUrl) {
+            let overlay = document.getElementById('line-share-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'line-share-overlay';
+                overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px);';
+                
+                const closeBtn = document.createElement('button');
+                closeBtn.innerHTML = '✖ 關閉畫面（請截圖保存本畫面）';
+                closeBtn.style.cssText = 'margin-bottom: 20px; padding: 12px 25px; font-size: 18px; font-weight: bold; border-radius: 30px; border: none; background: #fff; color: #333; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);';
+                closeBtn.onclick = () => overlay.style.display = 'none';
+                
+                const img = document.createElement('img');
+                img.id = 'fallback-result-img';
+                img.style.cssText = 'max-width: 100%; max-height: 80vh; border-radius: 15px; object-fit: contain; box-shadow: 0 0 25px rgba(255,255,255,0.2);';
+                
+                overlay.appendChild(closeBtn);
+                overlay.appendChild(img);
+                document.body.appendChild(overlay);
+            }
+            
+            document.getElementById('fallback-result-img').src = dataUrl;
+            overlay.style.display = 'flex';
+        }
+
+        async function executeShare() {
+            const shareBtn = document.getElementById('main-calc-btn');
+            const originalText = shareBtn.innerText;
+            shareBtn.innerText = '計算完成，圖片生成中...⏳';
+            
+            try {
+                await new Promise(r => setTimeout(r, 200));
+
+                const targetNode = document.getElementById('share-card');
+                
+                const canvas = await html2canvas(targetNode, {
+                    scale: 2, 
+                    backgroundColor: '#ffffff',
+                    useCORS: true 
+                });
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], 'my_health_result.jpg', { type: 'image/jpeg' });
+                    const shareData = {
+                        title: '我的健康檢測報告',
+                        files: [file]
+                    };
+
+                    if (navigator.canShare && navigator.canShare(shareData)) {
+                        try {
+                            await navigator.share(shareData);
+                            shareBtn.innerText = '✅ 圖片分享成功！';
+                            setTimeout(() => { shareBtn.innerText = originalText; }, 3000);
+                            return; 
+                        } catch (err) {
+                            console.log('分享取消或遭阻擋:', err);
+                        }
+                    }
+                    
+                    showImageFallbackOverlay(dataUrl);
+                    shareBtn.innerText = '✅ 圖片已產生！';
+                    setTimeout(() => { shareBtn.innerText = originalText; }, 3000);
+                    
+                }, 'image/jpeg', 0.9);
+
+            } catch (error) {
+                console.error('截圖分享失敗:', error);
+                alert('產生圖片失敗，這通常是由於您的裝置環境限制，您仍可以直接查看網頁下方的計算結果。');
+                shareBtn.innerText = originalText;
+            }
+        }
+    </script>
+</body>
+</html>
