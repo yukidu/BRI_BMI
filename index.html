@@ -408,7 +408,7 @@
                 <p><strong>標準公式：</strong>364.2 − 365.5 × √[1 – (腰圍/2π)² / (0.5×身高)²]</p>
                 <h3>📌 BRI 評量標準：</h3>
                 <ul>
-                    <li><strong>&lt; 3.41：</strong> 體脂肪偏低，需留意營養</li>
+                    <li><strong>&lt; 3.41：</strong> 體脂肪偏低，注意肌少症</li>
                     <li><strong>3.41 ～ 4.5：</strong> 偏瘦，可接受範圍</li>
                     <li><strong>4.5 ～ 5.5：</strong> ✅ 正常範圍 (健康圓潤)</li>
                     <li><strong>5.5 ～ 6.9：</strong> 偏圓，腹部脂肪略高</li>
@@ -562,21 +562,21 @@
                 
                 value = (364.2 - 365.5 * Math.sqrt(underRoot)).toFixed(2);
                 
-                if (value < 3.41) status = "體脂偏低 🦴";
-                else if (value < 4.5) status = "偏瘦 👌";
+                if (value < 3.41) status = "體脂偏低 🦴 可能肌少症，要留意營養";
+                else if (value < 4.5) status = "偏瘦 👌 可接受範圍";
                 else if (value < 5.5) status = "正常範圍 ✅";
-                else if (value < 6.9) status = "偏圓 ⚠️";
-                else status = "身體最圓 🚨";
+                else if (value < 6.9) status = "偏圓 ⚠️ 腹部脂肪略高";
+                else status = "身體最圓 🚨 需警覺代謝風險";
 
                 document.getElementById('s-calc-type').innerText = 'BRI (身體圓度指數)';
                 document.getElementById('s-formula').innerText = 'BRI = 364.2 − 365.5 × √[1 – (腰圍/2π)² / (0.5×身高)²]';
                 
                 const standards = [
-                    '&lt; 3.41 偏低',
-                    '3.41-4.5 偏瘦',
-                    '4.5-5.5 正常',
-                    '5.5-6.9 偏圓',
-                    '&gt; 6.9 身體最圓(高風險)'
+                    '&lt; 3.41 體脂肪偏低，可能肌少症，要留意營養',
+                    '3.41-4.5 偏瘦，可接受範圍',
+                    '4.5-5.5 正常範圍 (健康圓潤)',
+                    '5.5-6.9 偏圓，腹部脂肪略高',
+                    '&gt; 6.9 身體最圓，需警覺代謝風險'
                 ];
                 standards.forEach(std => {
                     standardsUl.innerHTML += `<li>${std}</li>`;
