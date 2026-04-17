@@ -416,6 +416,10 @@
                         <div class="measure-step-text"><b>吐氣量測：</b>維持正常呼吸，於<b>吐氣結束時</b>量測數值。</div>
                     </li>
                 </ul>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="image_f7d0cf.jpg" alt="腰圍量測示範" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                </div>
             </div>
         </div>
 
@@ -527,18 +531,17 @@
             if (type === 'bmi') {
                 document.body.className = 'theme-bmi';
             } else {
-                document.body.className = 'theme-bri'; // 腰圍跟 BRI 共用粉紅主題
+                document.body.className = 'theme-bri';
             }
             
-            // 更新三個按鈕的狀態
             document.getElementById('nav-btn-bri').className = (type === 'bri') ? 'nav-btn active' : 'nav-btn inactive';
             document.getElementById('nav-btn-bmi').className = (type === 'bmi') ? 'nav-btn active' : 'nav-btn inactive';
             document.getElementById('nav-btn-waist').className = (type === 'waist') ? 'nav-btn active' : 'nav-btn inactive';
             
             if (type === 'waist') {
-                switchView('waist-view'); // 顯示腰圍專屬頁面
+                switchView('waist-view'); 
             } else {
-                switchView('calc-view'); // 顯示計算機頁面
+                switchView('calc-view'); 
                 
                 document.getElementById('inp-height').value = '';
                 document.getElementById('inp-weight').value = '';
