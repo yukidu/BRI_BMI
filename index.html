@@ -140,6 +140,40 @@
             border-bottom: none;
         }
 
+        .measure-steps {
+            text-align: left;
+            margin: 10px 0 0 0;
+            padding: 0;
+            list-style: none;
+        }
+        .measure-step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            background: #fcfcfc;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            transition: border-color 0.6s ease;
+        }
+        .measure-step:last-child {
+            margin-bottom: 0;
+        }
+        .measure-step-num {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-right: 12px;
+            min-width: 20px;
+            transition: color 0.6s ease;
+        }
+        .measure-step-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #444;
+        }
+
         #floating-nav {
             position: fixed;
             top: 10px;
@@ -175,11 +209,11 @@
             transform: scale(0.95);
         }
 
-        #calc-view {
+        #calc-view, #waist-view {
             padding-top: 60px;
         }
 
-        #calc-title {
+        .view-title {
             text-align: center; 
             color: var(--primary-color); 
             font-size: 2.5rem; 
@@ -292,8 +326,8 @@
             position: absolute;
             bottom: 30px;
             right: 30px;
-            width: 100px; 
-            opacity: 0.02; 
+            width: 150px; 
+            opacity: 0.05; 
         }
 
         footer {
@@ -309,6 +343,7 @@
 <body class="theme-bri">
 
     <div id="floating-nav">
+        <button id="nav-btn-waist" class="nav-btn inactive" onclick="openCalc('waist')">📏 量腰圍</button>
         <button id="nav-btn-bri" class="nav-btn active" onclick="openCalc('bri')">⭕ BRI</button>
         <button id="nav-btn-bmi" class="nav-btn inactive" onclick="openCalc('bmi')">⚖️ BMI</button>
     </div>
@@ -330,38 +365,66 @@
                     <thead>
                         <tr>
                             <th style="color: #555;">項目</th>
-                            <th style="color: #20bf6b;">BMI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">身體質量指數</span></th>
-                            <th style="color: #ff6b6b;">BRI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">身體圓度指數</span></th>
+                            <th style="color: #20bf6b;">BMI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">(身體質量指數)</span></th>
+                            <th style="color: #ff6b6b;">BRI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">(身體圓度指數)</span></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td style="font-weight: bold; color: #555;">主要測量</td>
                             <td>整體胖瘦<br><span style="font-size: 0.75rem; color: #999;">(體重+身高)</span></td>
-                            <td>腹部脂肪<br><span style="font-size: 0.75rem; color: #999;">(腰圍+身高)</span></td>
+                            <td>脂肪分佈<br><span style="font-size: 0.75rem; color: #999;">(腰圍+身高)</span></td>
                         </tr>
                         <tr>
-                            <td style="font-weight: bold; color: #555;">內臟脂肪</td>
-                            <td>❌ 較弱</td>
-                            <td>✅ 較準確</td>
+                            <td style="font-weight: bold; color: #555;">內臟脂肪敏銳度</td>
+                            <td>❌ 低</td>
+                            <td>✅ 高</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: bold; color: #555;">代謝風險</td>
+                            <td style="font-weight: bold; color: #555;">心血管風險預測</td>
                             <td>❌ 較弱</td>
                             <td>✅ 較準確</td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold; color: #555;">適用情境</td>
-                            <td>一般體型評估</td>
-                            <td>內臟脂肪與代謝風險</td>
+                            <td>一般健康快篩</td>
+                            <td>關注小腹、代謝問題</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
+        <div id="waist-view" class="view">
+            <h1 class="view-title">📏 正確量測腰圍</h1>
+            <div class="article-content" style="margin-top: 0;">
+                <ul class="measure-steps">
+                    <li class="measure-step">
+                        <div class="measure-step-num">1</div>
+                        <div class="measure-step-text"><b>輕鬆站立：</b>除去腰部覆蓋衣物，輕鬆站立，雙手自然下垂。</div>
+                    </li>
+                    <li class="measure-step">
+                        <div class="measure-step-num">2</div>
+                        <div class="measure-step-text"><b>對準肚臍：</b>皮尺繞過腰部，對準<b>肚臍水平線</b>。</div>
+                    </li>
+                    <li class="measure-step">
+                        <div class="measure-step-num">3</div>
+                        <div class="measure-step-text"><b>保持平行：</b>調整皮尺與地面平行，並緊貼皮膚但不擠壓。</div>
+                    </li>
+                    <li class="measure-step">
+                        <div class="measure-step-num">4</div>
+                        <div class="measure-step-text"><b>吐氣量測：</b>維持正常呼吸，於<b>吐氣結束時</b>量測數值。</div>
+                    </li>
+                </ul>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="image_f7d0cf.jpg" alt="腰圍量測示範" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+        </div>
+
         <div id="calc-view" class="view">
-            <h1 id="calc-title"></h1>
+            <h1 id="calc-title" class="view-title"></h1>
             
             <div class="input-group">
                 <input type="text" id="inp-nickname" class="giant-input" placeholder="✨ 暱稱 (選填)">
@@ -408,7 +471,7 @@
                 <p><strong>標準公式：</strong>364.2 − 365.5 × √[1 – (腰圍/2π)² / (0.5×身高)²]</p>
                 <h3>📌 BRI 評量標準：</h3>
                 <ul>
-                    <li><strong>&lt; 3.41：</strong> 體脂肪偏低，注意肌少症</li>
+                    <li><strong>&lt; 3.41：</strong> 體脂肪偏低，需留意營養</li>
                     <li><strong>3.41 ～ 4.5：</strong> 偏瘦，可接受範圍</li>
                     <li><strong>4.5 ～ 5.5：</strong> ✅ 正常範圍 (健康圓潤)</li>
                     <li><strong>5.5 ～ 6.9：</strong> 偏圓，腹部脂肪略高</li>
@@ -443,12 +506,12 @@
                 <h4>📋 評量標準參考：</h4>
                 <ul id="s-standards"></ul>
             </div>
-            <img src="DragonTeamlogo.png" alt="Logo" class="share-logo">
+            <img src="Dragon Team logo v2.2 no文字.png" alt="Logo" class="share-logo">
         </div>
     </div>
 
     <footer>
-        APP程式設計：杜杜龍 2026.4.17
+        APP設計杜杜龍 2026.4.17
     </footer>
 
     <script>
@@ -464,7 +527,6 @@
 
         function openCalc(type) {
             currentMode = type;
-            switchView('calc-view');
             
             if (type === 'bmi') {
                 document.body.className = 'theme-bmi';
@@ -474,23 +536,30 @@
             
             document.getElementById('nav-btn-bri').className = (type === 'bri') ? 'nav-btn active' : 'nav-btn inactive';
             document.getElementById('nav-btn-bmi').className = (type === 'bmi') ? 'nav-btn active' : 'nav-btn inactive';
+            document.getElementById('nav-btn-waist').className = (type === 'waist') ? 'nav-btn active' : 'nav-btn inactive';
             
-            document.getElementById('inp-height').value = '';
-            document.getElementById('inp-weight').value = '';
-            document.getElementById('inp-waist').value = '';
-            
-            if (type === 'bmi') {
-                document.getElementById('calc-title').innerText = '⚖️ BMI 計算機';
-                document.getElementById('group-weight').style.display = 'block';
-                document.getElementById('group-waist').style.display = 'none';
-                document.getElementById('article-bmi').style.display = 'block';
-                document.getElementById('article-bri').style.display = 'none';
+            if (type === 'waist') {
+                switchView('waist-view'); 
             } else {
-                document.getElementById('calc-title').innerText = '⭕ BRI 計算機';
-                document.getElementById('group-weight').style.display = 'none';
-                document.getElementById('group-waist').style.display = 'block';
-                document.getElementById('article-bmi').style.display = 'none';
-                document.getElementById('article-bri').style.display = 'block';
+                switchView('calc-view'); 
+                
+                document.getElementById('inp-height').value = '';
+                document.getElementById('inp-weight').value = '';
+                document.getElementById('inp-waist').value = '';
+                
+                if (type === 'bmi') {
+                    document.getElementById('calc-title').innerText = '⚖️ BMI 計算機';
+                    document.getElementById('group-weight').style.display = 'block';
+                    document.getElementById('group-waist').style.display = 'none';
+                    document.getElementById('article-bmi').style.display = 'block';
+                    document.getElementById('article-bri').style.display = 'none';
+                } else if (type === 'bri') {
+                    document.getElementById('calc-title').innerText = '⭕ BRI 計算機';
+                    document.getElementById('group-weight').style.display = 'none';
+                    document.getElementById('group-waist').style.display = 'block';
+                    document.getElementById('article-bmi').style.display = 'none';
+                    document.getElementById('article-bri').style.display = 'block';
+                }
             }
         }
 
@@ -562,21 +631,21 @@
                 
                 value = (364.2 - 365.5 * Math.sqrt(underRoot)).toFixed(2);
                 
-                if (value < 3.41) status = "體脂偏低 🦴 可能肌少症，要留意營養";
-                else if (value < 4.5) status = "偏瘦 👌 可接受範圍";
-                else if (value < 5.5) status = "正常範圍 ✅";
-                else if (value < 6.9) status = "偏圓 ⚠️ 腹部脂肪略高";
-                else status = "身體最圓 🚨 需警覺代謝風險";
+                if (value < 3.41) status = "體脂偏低 🦴 需留意營養，小心肌少症";
+                else if (value < 4.5) status = "偏瘦 👌 可接受，建議搭配 BMI 進一步評估";
+                else if (value < 5.5) status = "正常範圍 ✅ 健康圓潤，脂肪分布良好";
+                else if (value < 6.9) status = "偏圓 ⚠️ 腹部脂肪略高，開始注意飲食、營養與運動";
+                else status = "身體最圓 🚨 內臟脂肪明顯偏高，需警覺代謝風險";
 
                 document.getElementById('s-calc-type').innerText = 'BRI (身體圓度指數)';
                 document.getElementById('s-formula').innerText = 'BRI = 364.2 − 365.5 × √[1 – (腰圍/2π)² / (0.5×身高)²]';
                 
                 const standards = [
-                    '&lt; 3.41 體脂肪偏低，可能肌少症，要留意營養',
-                    '3.41-4.5 偏瘦，可接受範圍',
-                    '4.5-5.5 正常範圍 (健康圓潤)',
-                    '5.5-6.9 偏圓，腹部脂肪略高',
-                    '&gt; 6.9 身體最圓，需警覺代謝風險'
+                    '&lt; 3.41 偏低',
+                    '3.41-4.5 偏瘦',
+                    '4.5-5.5 正常',
+                    '5.5-6.9 偏圓',
+                    '&gt; 6.9 身體最圓(高風險)'
                 ];
                 standards.forEach(std => {
                     standardsUl.innerHTML += `<li>${std}</li>`;
