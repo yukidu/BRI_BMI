@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="BRI計算機, BMI計算機, BRI計算器, BMI計算器, 減重計算機, 減脂計算機, 減肥, 瘦身, 健身, 健康計算機, 紐崔萊計算機, bri-calculator">
+    <meta name="description" content="免費且專業的 BRI 身體圓度指數與 BMI 身體質量指數計算機。幫助您精準掌握腹部脂肪與整體胖瘦，是您減重、減脂、瘦身與健身的健康管理好幫手！">
+    
     <title>健管45計算機：BRI & BMI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -25,7 +28,7 @@
         html, body {
             margin: 0;
             padding: 0;
-            min-height: 100vh; /* 解決滑動卡住的問題 */
+            min-height: 100vh;
         }
 
         body {
@@ -40,7 +43,7 @@
         }
 
         .container {
-            flex: 1 0 auto; /* 確保內容能把版權推到底部 */
+            flex: 1 0 auto;
             max-width: 900px;
             margin: 0 auto;
             padding: 10px 20px;
@@ -78,28 +81,63 @@
 
         .big-card {
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 25px;
-            padding: 20px;
-            margin: 15px 0;
+            border-radius: 20px;
+            padding: 15px;
+            margin: 10px 0;
             text-align: center;
             cursor: pointer;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             animation: float 4s ease-in-out infinite;
         }
         .big-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
             background: #fff;
         }
         .big-card h1 {
-            font-size: 2.2rem;
-            margin: 0 0 10px 0;
+            font-size: 1.8rem;
+            margin: 0 0 5px 0;
         }
         .big-card p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #555;
             margin: 0;
+        }
+
+        .comparison-table-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+        .comparison-table-wrapper h3 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        .comparison-table th {
+            padding: 6px;
+            border-bottom: 2px solid #ddd;
+        }
+        .comparison-table td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #eee;
+        }
+        .comparison-table tr:last-child td {
+            border-bottom: none;
         }
 
         #floating-nav {
@@ -151,7 +189,6 @@
             transition: color 0.6s ease;
         }
 
-        /* 縮小間距，讓按鈕完整顯示 */
         .input-group { margin-bottom: 12px; }
         .giant-input {
             width: 100%;
@@ -219,7 +256,9 @@
             font-size: 1.05rem;
         }
         
-        /* 確保 BRI 評量標準每一行維持不換行 */
+        .article-content ul {
+            padding-left: 20px;
+        }
         #article-bri ul li {
             white-space: nowrap;
         }
@@ -249,22 +288,21 @@
         .share-details ul { list-style-type: none; padding-left: 0; margin-top: 5px; } 
         .share-details li { margin-bottom: 5px; }
 
-        /* Logo 透明度改為 5% */
         .share-logo {
             position: absolute;
             bottom: 30px;
             right: 30px;
-            width: 80px; 
-            opacity: 0.05; 
+            width: 150px; 
+            opacity: 0.04; 
         }
 
         footer {
             flex-shrink: 0;
             text-align: center;
-            padding: 20px 10px;
+            padding: 10px;
             color: rgba(0,0,0,0.5);
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -281,9 +319,44 @@
                 <h1 style="color: #ff6b6b;">⭕ BRI 計算機</h1>
                 <p>身體圓度指數：掌握腹部脂肪，預測健康風險的新指標！</p>
             </div>
-            <div class="big-card" onclick="openCalc('bmi')" style="animation-delay: 0.2s;">
+            <div class="big-card" onclick="openCalc('bmi')" style="animation-delay: 0.1s;">
                 <h1 style="color: #20bf6b;">⚖️ BMI 計算機</h1>
                 <p>身體質量指數：衡量整體體重與身高的經典指標！</p>
+            </div>
+
+            <div class="comparison-table-wrapper">
+                <h3>BMI 與 BRI，你該選哪個？</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="color: #555;">項目</th>
+                            <th style="color: #20bf6b;">BMI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">身體質量指數</span></th>
+                            <th style="color: #ff6b6b;">BRI<br><span style="font-size: 0.75rem; font-weight: normal; color: #777;">身體圓度指數</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: bold; color: #555;">主要測量</td>
+                            <td>整體胖瘦<br><span style="font-size: 0.75rem; color: #999;">(體重+身高)</span></td>
+                            <td>腹部脂肪<br><span style="font-size: 0.75rem; color: #999;">(腰圍+身高)</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #555;">內臟脂肪</td>
+                            <td>❌ 較弱</td>
+                            <td>✅ 較準確</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #555;">代謝風險</td>
+                            <td>❌ 較弱</td>
+                            <td>✅ 較準確</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; color: #555;">適用情境</td>
+                            <td>一般體型評估</td>
+                            <td>內臟脂肪與代謝風險</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -375,7 +448,7 @@
     </div>
 
     <footer>
-        APP設計：寰宇杜杜龍 2026.4.17
+        APP程式設計：杜杜龍 2026.4.17
     </footer>
 
     <script>
@@ -524,7 +597,6 @@
             await executeShare();
         }
 
-        // 修正後的 Fallback 畫面，移除了文字框，並更新了關閉按鈕文字
         function showImageFallbackOverlay(dataUrl) {
             let overlay = document.getElementById('line-share-overlay');
             if (!overlay) {
